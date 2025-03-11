@@ -10,9 +10,7 @@ let weatherEffect = null;
 let tomorrowTemp = null; // Lưu nhiệt độ ngày mai cho trò chơi
 
 const locations = [
-    "Hà Nội", "Quận Ba Đình", "Quận Hoàn Kiếm", "Quận Đống Đa", "Quận Hai Bà Trưng",
-    "TP Hồ Chí Minh", "Quận 1", "Quận 3", "Quận 7", "Quận Bình Thạnh",
-    "Đà Nẵng", "Quận Hải Châu", "Quận Thanh Khê", "Quận Sơn Trà"
+   
 ];
 
 function getWeather() {
