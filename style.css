@@ -6,122 +6,137 @@
 }
 
 body {
-    font-family: 'Segoe UI', Arial, sans-serif;
-    background: linear-gradient(135deg, #74ebd5, #acb6e5); /* Background như lần trước */
+    font-family: 'Poppins', sans-serif; /* Font hiện đại, đẹp mắt */
+    background: linear-gradient(135deg, #a1c4fd, #c2e9fb); /* Gradient xanh dương nhạt và tím pastel */
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
     padding: 20px;
-    transition: background 0.5s;
+    transition: background 0.5s ease;
 }
 
 /* Dark Mode */
 body.dark {
-    background: linear-gradient(135deg, #2c3e50, #4b79a1);
+    background: linear-gradient(135deg, #1e3c72, #2a5298); /* Gradient tối sang trọng */
 }
 
 /* Container */
 .container {
-    background: rgba(255, 255, 255, 0.95);
-    padding: 30px;
-    border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-    width: 700px;
+    background: rgba(255, 160, 160, 0.9);
+    padding: 40px;
+    border-radius: 30px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15); /* Bóng đổ nhẹ */
+    width: 800px;
     max-width: 100%;
-    animation: fadeIn 0.5s ease-in;
+    backdrop-filter: blur(10px); /* Hiệu ứng mờ nền */
+    animation: fadeIn 0.6s ease-in;
 }
 
 body.dark .container {
-    background: rgba(44, 62, 80, 0.95);
-    color: #ecf0f1;
+    background: rgba(30, 60, 114, 0.9); /* Màu tối trong suốt */
+    color: #e0e7ff;
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-20px); }
+    from { opacity: 0; transform: translateY(-30px); }
     to { opacity: 1; transform: translateY(0); }
+}
+
+/* Tiêu đề */
+.title {
+    font-size: 32px;
+    font-weight: 600;
+    color: #2c3e50;
+    text-align: center;
+    margin-bottom: 30px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+}
+
+body.dark .title {
+    color: #d1d8e0;
 }
 
 /* Controls */
 .controls {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 20px;
+    margin-bottom: 25px;
 }
 
 .btn-theme, .btn-unit {
-    padding: 10px 20px;
+    padding: 12px 25px;
     border: none;
-    border-radius: 25px;
-    color: white;
+    border-radius: 50px;
+    color: #fff;
     cursor: pointer;
-    transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.btn-theme {
-    background: linear-gradient(45deg, #34495e, #6782b4);
+    font-weight: 500;
+    background: linear-gradient(45deg, #6b7280, #9ca3af); /* Gradient xám nhẹ */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .btn-unit {
-    background: linear-gradient(45deg, #f06292, #f48fb1);
+    background: linear-gradient(45deg, #ec4899, #f472b6); /* Gradient hồng */
 }
 
 .btn-theme:hover, .btn-unit:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
 }
 
 /* Thanh tìm kiếm */
 .search-box {
     position: relative;
-    margin-bottom: 30px;
+    margin-bottom: 35px;
     display: flex;
-    gap: 10px;
+    gap: 15px;
     align-items: center;
 }
 
 .search-box input {
-    padding: 12px 20px;
+    padding: 14px 25px;
     width: 60%;
     border: none;
-    border-radius: 25px;
-    background: #f1f3f4;
-    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+    border-radius: 50px;
+    background: #f8fafc;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
     font-size: 16px;
     transition: all 0.3s ease;
 }
 
 body.dark .search-box input {
-    background: #34495e;
-    color: #ecf0f1;
+    background: #334155;
+    color: #e0e7ff;
 }
 
 .search-box input:focus {
     outline: none;
     background: #fff;
-    box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
+    box-shadow: 0 0 15px rgba(59, 130, 246, 0.5); /* Viền xanh khi focus */
 }
 
 .search-box button {
-    padding: 12px 25px;
+    padding: 14px 30px;
     border: none;
-    border-radius: 25px;
-    color: white;
+    border-radius: 50px;
+    color: #fff;
     cursor: pointer;
-    transition: transform 0.2s, box-shadow 0.2s;
+    font-weight: 500;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .btn-search {
-    background: linear-gradient(45deg, #4CAF50, #66bb6a);
+    background: linear-gradient(45deg, #10b981, #34d399); /* Gradient xanh lá */
 }
 
 .btn-location {
-    background: linear-gradient(45deg, #0288d1, #4fc3f7);
+    background: linear-gradient(45deg, #3b82f6, #60a5fa); /* Gradient xanh dương */
 }
 
 .search-box button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
 }
 
 /* Gợi ý */
@@ -130,9 +145,9 @@ body.dark .search-box input {
     top: 100%;
     left: 0;
     width: 60%;
-    background: #fff;
-    border-radius: 10px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+ /* nickname: */ background: #fff; 
+    border-radius: 15px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
     max-height: 200px;
     overflow-y: auto;
     display: none;
@@ -140,35 +155,36 @@ body.dark .search-box input {
 }
 
 body.dark .suggestions {
-    background: #34495e;
+    background: #334155;
 }
 
 .suggestions div {
     padding: 12px 20px;
     cursor: pointer;
-    transition: background 0.2s;
+    transition: background 0.2s ease;
 }
 
 .suggestions div:hover {
-    background: #e8f5e9;
+    background: #e0f2fe;
 }
 
 body.dark .suggestions div:hover {
-    background: #5d80a6;
+    background: #475569;
 }
 
 /* Thời tiết hiện tại */
 .weather-info {
     display: none;
-    background: linear-gradient(135deg, #e3f2fd, #bbdefb);
-    padding: 20px;
-    border-radius: 15px;
-    margin-bottom: 30px;
-    animation: slideUp 0.5s ease;
+    background: linear-gradient(135deg, #dbeafe, #bfdbfe); /* Gradient nhẹ nhàng */
+    padding: 25px;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    margin-bottom: 35px;
+    animation: slideUp 0.6s ease;
 }
 
 body.dark .weather-info {
-    background: linear-gradient(135deg, #34495e, #5d80a6);
+    background: linear-gradient(135deg, #1e40af, #3b82f6);
 }
 
 .weather-info.show {
@@ -181,47 +197,78 @@ body.dark .weather-info {
 }
 
 .city-name {
-    color: #1e88e5;
-    font-size: 28px;
-    margin-bottom: 15px;
+    color: #1e40af;
+    font-size: 30px;
+    font-weight: 600;
+    margin-bottom: 8px;
 }
 
 body.dark .city-name {
-    color: #90caf9;
+    color: #93c5fd;
+}
+
+.datetime {
+    color: #64748b;
+    font-size: 16px;
+    margin-bottom: 12px;
+}
+
+body.dark .datetime {
+    color: #cbd5e1;
+}
+
+.btn-refresh {
+    padding: 10px 25px;
+    border: none;
+    border-radius: 50px;
+    background: linear-gradient(45deg, #f59e0b, #fbbf24); /* Gradient cam vàng */
+    color: #fff;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    margin-bottom: 20px;
+}
+
+.btn-refresh:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
 }
 
 .weather-icon img {
-    width: 60px;
-    height: 60px;
+    width: 70px;
+    height: 70px;
     animation: bounce 2s infinite;
 }
 
 @keyframes bounce {
     0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-    40% { transform: translateY(-10px); }
-    60% { transform: translateY(-5px); }
+    40% { transform: translateY(-12px); }
+    60% { transform: translateY(-6px); }
 }
 
 .weather-detail {
-    color: #424242;
+    color: #475569;
     font-size: 18px;
-    margin: 10px 0;
+    margin: 12px 0;
+    font-weight: 400;
 }
 
 body.dark .weather-detail {
-    color: #ecf0f1;
+    color: #e0e7ff;
 }
 
 .aqi-info {
     margin-top: 15px;
     font-size: 16px;
-    color: #e74c3c;
+    color: #ef4444;
+    font-weight: 500;
 }
 
 /* Phần dự báo */
 .forecast-section {
     display: none;
-    margin-top: 30px;
+    margin-top: 35px;
 }
 
 .forecast-section.show {
@@ -229,62 +276,63 @@ body.dark .weather-detail {
 }
 
 .forecast-section h3 {
-    color: #2c3e50;
-    font-size: 22px;
-    margin-bottom: 15px;
+    color: #1e293b;
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 20px;
     text-align: left;
 }
 
 body.dark .forecast-section h3 {
-    color: #ecf0f1;
+    color: #d1d8e0;
 }
 
 .forecast-list {
     display: flex;
     flex-wrap: wrap;
-    gap: 15px;
+    gap: 20px;
     justify-content: space-between;
 }
 
 .forecast-item {
     background: #fff;
-    padding: 15px;
-    border-radius: 10px;
-    flex: 1 1 calc(20% - 15px);
+    padding: 20px;
+    border-radius: 15px;
+    flex: 1 1 calc(20% - 20px);
     text-align: center;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 body.dark .forecast-item {
-    background: #34495e;
+    background: #475569;
 }
 
 .forecast-item:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
 }
 
 .forecast-item img {
-    width: 40px;
-    height: 40px;
+    width: 50px;
+    height: 50px;
 }
 
 .forecast-item p {
-    color: #616161;
+    color: #64748b;
     font-size: 16px;
-    margin: 8px 0;
+    margin: 10px 0;
 }
 
 body.dark .forecast-item p {
-    color: #ecf0f1;
+    color: #e0e7ff;
 }
 
 /* Responsive */
 @media (max-width: 600px) {
     .container {
         width: 100%;
-        padding: 15px;
+        padding: 20px;
     }
 
     .search-box input {
@@ -293,7 +341,7 @@ body.dark .forecast-item p {
 
     .search-box {
         flex-direction: column;
-        gap: 10px;
+        gap: 15px;
     }
 
     .suggestions {
@@ -302,5 +350,13 @@ body.dark .forecast-item p {
 
     .forecast-item {
         flex: 1 1 calc(50% - 15px);
+    }
+
+    .title {
+        font-size: 28px;
+    }
+
+    .city-name {
+        font-size: 26px;
     }
 }

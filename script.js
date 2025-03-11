@@ -47,6 +47,15 @@ function getCurrentLocation() {
     }
 }
 
+function refreshWeather() {
+    const city = document.getElementById("city-input").value;
+    if (!city) {
+        alert("Vui lòng nhập tên khu vực trước khi làm mới!");
+        return;
+    }
+    getWeather(); // Gọi lại getWeather để cập nhật dữ liệu
+}
+
 function suggestLocations() {
     const input = document.getElementById("city-input").value.toLowerCase();
     const suggestions = document.getElementById("suggestions");
@@ -181,6 +190,7 @@ function fetchAirPollutionByCoords(lat, lon) {
 function displayWeather(data) {
     const weatherInfo = document.getElementById("weather-info");
     const cityName = document.getElementById("city-name");
+    const datetime = document.getElementById("datetime");
     const temperature = document.getElementById("temperature");
     const description = document.getElementById("description");
     const humidity = document.getElementById("humidity");
@@ -191,6 +201,8 @@ function displayWeather(data) {
     const weatherIcon = document.getElementById("weather-icon");
 
     cityName.textContent = `${data.name}, ${data.sys.country}`;
+    const now = new Date();
+    datetime.textContent = `Cập nhật: ${now.toLocaleDateString("vi-VN")} ${now.toLocaleTimeString("vi-VN")}`;
     temperature.textContent = `Nhiệt độ: ${data.main.temp}${unit === "metric" ? "°C" : "°F"}`;
     description.textContent = `Thời tiết: ${data.weather[0].description}`;
     humidity.textContent = `Độ ẩm: ${data.main.humidity}%`;
