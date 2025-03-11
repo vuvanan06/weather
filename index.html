@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dự báo thời tiết</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">Dự báo thời tiết An's </h1>
+        <div class="search-box">
+            <input type="text" id="city-input" placeholder="Nhập quận, huyện, thành phố" onkeyup="suggestLocations()">
+            <div id="suggestions" class="suggestions"></div>
+            <button onclick="getWeather()" class="btn-search">Tìm</button>
+            <button onclick="getCurrentLocation()" class="btn-location">Vị trí hiện tại</button>
+        </div>
+
+        <!-- Thời tiết hiện tại -->
+        <div id="weather-info" class="weather-info">
+            <h2 id="city-name" class="city-name"></h2>
+            <div id="weather-icon" class="weather-icon"></div>
+            <p id="temperature" class="weather-detail"></p>
+            <p id="description" class="weather-detail"></p>
+            <p id="humidity" class="weather-detail"></p>
+            <p id="wind" class="weather-detail"></p>
+        </div>
+
+        <!-- Dự báo theo giờ -->
+        <div id="hourly-forecast" class="forecast-section hourly">
+            <h3>Dự báo vài giờ tới</h3>
+            <div id="hourly-list" class="forecast-list"></div>
+        </div>
+
+        <!-- Dự báo theo ngày -->
+        <div id="daily-forecast" class="forecast-section daily">
+            <h3>Dự báo 5 ngày tới</h3>
+            <div id="daily-list" class="forecast-list"></div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
