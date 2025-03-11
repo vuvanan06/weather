@@ -6,8 +6,8 @@
 }
 
 body {
-    font-family: 'Poppins', sans-serif; /* Font hiện đại, đẹp mắt */
-    background: linear-gradient(135deg, #a1c4fd, #c2e9fb); /* Gradient xanh dương nhạt và tím pastel */
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #a1c4fd, #c2e9fb);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -18,7 +18,7 @@ body {
 
 /* Dark Mode */
 body.dark {
-    background: linear-gradient(135deg, #1e3c72, #2a5298); /* Gradient tối sang trọng */
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
 }
 
 /* Container */
@@ -26,15 +26,16 @@ body.dark {
     background: rgba(255, 255, 255, 0.9);
     padding: 40px;
     border-radius: 30px;
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15); /* Bóng đổ nhẹ */
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
     width: 800px;
     max-width: 100%;
-    backdrop-filter: blur(10px); /* Hiệu ứng mờ nền */
+    backdrop-filter: blur(10px);
     animation: fadeIn 0.6s ease-in;
+    position: relative;
 }
 
 body.dark .container {
-    background: rgba(30, 60, 114, 0.9); /* Màu tối trong suốt */
+    background: rgba(30, 60, 114, 0.9);
     color: #e0e7ff;
 }
 
@@ -72,12 +73,12 @@ body.dark .title {
     color: #fff;
     cursor: pointer;
     font-weight: 500;
-    background: linear-gradient(45deg, #6b7280, #9ca3af); /* Gradient xám nhẹ */
+    background: linear-gradient(45deg, #6b7280, #9ca3af);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .btn-unit {
-    background: linear-gradient(45deg, #ec4899, #f472b6); /* Gradient hồng */
+    background: linear-gradient(45deg, #ec4899, #f472b6);
 }
 
 .btn-theme:hover, .btn-unit:hover {
@@ -113,7 +114,7 @@ body.dark .search-box input {
 .search-box input:focus {
     outline: none;
     background: #fff;
-    box-shadow: 0 0 15px rgba(59, 130, 246, 0.5); /* Viền xanh khi focus */
+    box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
 }
 
 .search-box button {
@@ -127,11 +128,11 @@ body.dark .search-box input {
 }
 
 .btn-search {
-    background: linear-gradient(45deg, #10b981, #34d399); /* Gradient xanh lá */
+    background: linear-gradient(45deg, #10b981, #34d399);
 }
 
 .btn-location {
-    background: linear-gradient(45deg, #3b82f6, #60a5fa); /* Gradient xanh dương */
+    background: linear-gradient(45deg, #3b82f6, #60a5fa);
 }
 
 .search-box button:hover {
@@ -145,7 +146,7 @@ body.dark .search-box input {
     top: 100%;
     left: 0;
     width: 60%;
- nickname:  background: #fff;
+    background: #fff;
     border-radius: 15px;
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
     max-height: 200px;
@@ -172,10 +173,37 @@ body.dark .suggestions div:hover {
     background: #475569;
 }
 
+/* Thông báo thời tiết */
+.alert {
+    display: none;
+    background: linear-gradient(45deg, #ef4444, #f87171);
+    padding: 15px;
+    border-radius: 15px;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 20px;
+    animation: pulse 2s infinite;
+}
+
+.alert.show {
+    display: block;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+    100% { transform: scale(1); }
+}
+
+body.dark .alert {
+    background: linear-gradient(45deg, #dc2626, #ef4444);
+}
+
 /* Thời tiết hiện tại */
 .weather-info {
     display: none;
-    background: linear-gradient(135deg, #dbeafe, #bfdbfe); /* Gradient nhẹ nhàng */
+    background: linear-gradient(135deg, #dbeafe, #bfdbfe);
     padding: 25px;
     border-radius: 20px;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
@@ -221,7 +249,7 @@ body.dark .datetime {
     padding: 10px 25px;
     border: none;
     border-radius: 50px;
-    background: linear-gradient(45deg, #f59e0b, #fbbf24); /* Gradient cam vàng */
+    background: linear-gradient(45deg, #f59e0b, #fbbf24);
     color: #fff;
     cursor: pointer;
     font-size: 14px;
@@ -302,6 +330,7 @@ body.dark .forecast-section h3 {
     text-align: center;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
 }
 
 body.dark .forecast-item {
@@ -325,6 +354,104 @@ body.dark .forecast-item {
 }
 
 body.dark .forecast-item p {
+    color: #e0e7ff;
+}
+
+/* Biểu đồ */
+.chart {
+    width: 100%;
+    height: 200px;
+    margin-top: 20px;
+}
+
+/* Modal */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+}
+
+.modal.show {
+    display: flex;
+}
+
+.modal-content {
+    background: #fff;
+    padding: 30px;
+    border-radius: 20px;
+    width: 400px;
+    max-width: 90%;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+    animation: modalFadeIn 0.3s ease;
+    text-align: center;
+}
+
+body.dark .modal-content {
+    background: #334155;
+    color: #e0e7ff;
+}
+
+@keyframes modalFadeIn {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.close-modal {
+    display: inline-block;
+    padding: 10px 25px;
+    border: none;
+    border-radius: 50px;
+    background: linear-gradient(45deg, #ef4444, #f87171);
+    color: #fff;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    margin-top: 20px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.close-modal:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+body.dark .close-modal {
+    background: linear-gradient(45deg, #dc2626, #ef4444);
+}
+
+.modal-title {
+    font-size: 24px;
+    font-weight: 600;
+    color: #1e40af;
+    margin-bottom: 15px;
+}
+
+body.dark .modal-title {
+    color: #93c5fd;
+}
+
+.modal-icon img {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto 15px;
+    display: block;
+}
+
+.modal-detail {
+    color: #475569;
+    font-size: 16px;
+    margin: 10px 0;
+    font-weight: 400;
+}
+
+body.dark .modal-detail {
     color: #e0e7ff;
 }
 
@@ -358,5 +485,14 @@ body.dark .forecast-item p {
 
     .city-name {
         font-size: 26px;
+    }
+
+    .modal-content {
+        width: 90%;
+        padding: 20px;
+    }
+
+    .chart {
+        height: 150px;
     }
 }

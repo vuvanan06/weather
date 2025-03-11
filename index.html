@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dự báo thời tiết</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Thêm Chart.js -->
 </head>
 <body>
     <div class="container">
@@ -20,11 +22,14 @@
             <button onclick="getCurrentLocation()" class="btn-location">Vị trí hiện tại</button>
         </div>
 
+        <!-- Thông báo thời tiết -->
+        <div id="weather-alert" class="alert"></div>
+
         <!-- Thời tiết hiện tại -->
         <div id="weather-info" class="weather-info">
             <h2 id="city-name" class="city-name"></h2>
             <p id="datetime" class="datetime"></p>
-            <button onclick="refreshWeather()" class="btn-refresh">Refresh</button> <!-- Nút Refresh -->
+            <button onclick="refreshWeather()" class="btn-refresh">Refresh</button>
             <div id="weather-icon" class="weather-icon"></div>
             <p id="temperature" class="weather-detail"></p>
             <p id="description" class="weather-detail"></p>
@@ -40,12 +45,29 @@
         <div id="hourly-forecast" class="forecast-section hourly">
             <h3>Dự báo vài giờ tới</h3>
             <div id="hourly-list" class="forecast-list"></div>
+            <canvas id="hourly-chart" class="chart"></canvas> <!-- Biểu đồ nhiệt độ theo giờ -->
         </div>
 
         <!-- Dự báo theo ngày -->
         <div id="daily-forecast" class="forecast-section daily">
             <h3>Dự báo 5 ngày tới</h3>
             <div id="daily-list" class="forecast-list"></div>
+            <canvas id="daily-chart" class="chart"></canvas> <!-- Biểu đồ nhiệt độ theo ngày -->
+        </div>
+
+        <!-- Modal chi tiết -->
+        <div id="weather-modal" class="modal">
+            <div class="modal-content">
+                <h2 id="modal-time" class="modal-title"></h2>
+                <div id="modal-icon" class="modal-icon"></div>
+                <p id="modal-temp" class="modal-detail"></p>
+                <p id="modal-desc" class="modal-detail"></p>
+                <p id="modal-humidity" class="modal-detail"></p>
+                <p id="modal-wind" class="modal-detail"></p>
+                <p id="modal-rain" class="modal-detail"></p>
+                <p id="modal-pressure" class="modal-detail"></p>
+                <button class="close-modal" onclick="closeModal()">Đóng</button>
+            </div>
         </div>
     </div>
     <script src="script.js"></script>
