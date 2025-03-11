@@ -23,7 +23,7 @@ body.dark {
 
 /* Container */
 .container {
-    background: rgba(255, 160, 160, 0.9);
+    background: rgba(255, 255, 255, 0.9);
     padding: 40px;
     border-radius: 30px;
     box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15); /* Bóng đổ nhẹ */
@@ -145,7 +145,7 @@ body.dark .search-box input {
     top: 100%;
     left: 0;
     width: 60%;
- /* nickname: */ background: #fff; 
+ nickname:  background: #fff;
     border-radius: 15px;
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
     max-height: 200px;
