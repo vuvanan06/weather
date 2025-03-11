@@ -21,6 +21,17 @@ body.dark {
     background: linear-gradient(135deg, #1e3c72, #2a5298);
 }
 
+/* Canvas hiệu ứng */
+.effects {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    pointer-events: none;
+}
+
 /* Container */
 .container {
     background: rgba(255, 255, 255, 0.9);
@@ -173,6 +184,82 @@ body.dark .suggestions div:hover {
     background: #475569;
 }
 
+/* Sở thích cá nhân */
+.preference-box {
+    margin-bottom: 20px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.preference-box label {
+    color: #2c3e50;
+    font-size: 16px;
+}
+
+body.dark .preference-box label {
+    color: #d1d8e0;
+}
+
+.preference-box select {
+    padding: 10px;
+    border-radius: 10px;
+    border: none;
+    background: #f8fafc;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+body.dark .preference-box select {
+    background: #334155;
+    color: #e0e7ff;
+}
+
+/* Nhắc nhở thời tiết */
+.reminder-box {
+    margin-bottom: 20px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.reminder-box label {
+    color: #2c3e50;
+    font-size: 16px;
+}
+
+body.dark .reminder-box label {
+    color: #d1d8e0;
+}
+
+.reminder-box input, .reminder-box select {
+    padding: 10px;
+    border-radius: 10px;
+    border: none;
+    background: #f8fafc;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+body.dark .reminder-box input, body.dark .reminder-box select {
+    background: #334155;
+    color: #e0e7ff;
+}
+
+.btn-reminder {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 50px;
+    background: linear-gradient(45deg, #8b5cf6, #a78bfa);
+    color: #fff;
+    cursor: pointer;
+    font-weight: 500;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.btn-reminder:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
 /* Thông báo thời tiết */
 .alert {
     display: none;
@@ -261,6 +348,17 @@ body.dark .datetime {
 .btn-refresh:hover {
     transform: translateY(-3px);
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.insight {
+    color: #10b981;
+    font-size: 16px;
+    font-style: italic;
+    margin-bottom: 15px;
+}
+
+body.dark .insight {
+    color: #34d399;
 }
 
 .weather-icon img {
@@ -362,6 +460,70 @@ body.dark .forecast-item p {
     width: 100%;
     height: 200px;
     margin-top: 20px;
+}
+
+/* Trò chơi thời tiết */
+.game {
+    margin-top: 35px;
+    padding: 20px;
+    background: linear-gradient(135deg, #fefcbf, #fef08a);
+    border-radius: 20px;
+    text-align: center;
+}
+
+body.dark .game {
+    background: linear-gradient(135deg, #713f12, #854d0e);
+}
+
+.game h3 {
+    color: #713f12;
+    font-size: 24px;
+    margin-bottom: 15px;
+}
+
+body.dark .game h3 {
+    color: #fef08a;
+}
+
+.game input {
+    padding: 10px;
+    border-radius: 10px;
+    border: none;
+    background: #fff;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    width: 100px;
+    margin-right: 10px;
+}
+
+body.dark .game input {
+    background: #334155;
+    color: #e0e7ff;
+}
+
+.btn-game {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 50px;
+    background: linear-gradient(45deg, #f97316, #fb923c);
+    color: #fff;
+    cursor: pointer;
+    font-weight: 500;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.btn-game:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.game-result {
+    color: #475569;
+    font-size: 16px;
+    margin-top: 10px;
+}
+
+body.dark .game-result {
+    color: #e0e7ff;
 }
 
 /* Modal */
@@ -466,7 +628,7 @@ body.dark .modal-detail {
         width: 100%;
     }
 
-    .search-box {
+    .search-box, .preference-box, .reminder-box {
         flex-direction: column;
         gap: 15px;
     }

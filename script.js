@@ -5,7 +5,9 @@ const airPollutionUrl = "https://api.openweathermap.org/data/2.5/air_pollution";
 const geocodeApiUrl = "http://api.openweathermap.org/geo/1.0/direct";
 
 let unit = "metric";
-let hourlyChart, dailyChart; // Biến lưu trữ biểu đồ
+let hourlyChart, dailyChart;
+let weatherEffect = null;
+let tomorrowTemp = null; // Lưu nhiệt độ ngày mai cho trò chơi
 
 const locations = [
     "Hà Nội", "Quận Ba Đình", "Quận Hoàn Kiếm", "Quận Đống Đa", "Quận Hai Bà Trưng",
@@ -116,7 +118,7 @@ function toggleUnit() {
 function toggleTheme() {
     document.body.classList.toggle("dark");
     document.getElementById("theme-toggle").textContent = document.body.classList.contains("dark") ? "Chế độ sáng" : "Chế độ tối";
-    updateChartColors(); // Cập nhật màu biểu đồ khi đổi theme
+    updateChartColors();
 }
 
 function fetchWeather(city) {
@@ -202,9 +204,10 @@ function displayWeather(data) {
     const visibility = document.getElementById("visibility");
     const weatherIcon = document.getElementById("weather-icon");
     const alert = document.getElementById("weather-alert");
+    const insight = document.getElementById("personal-insight");
 
     cityName.textContent = `${data.name}, ${data.sys.country}`;
-    updateTime(datetime); // Cập nhật thời gian thực
+    updateTime(datetime);
     temperature.textContent = `Nhiệt độ: ${data.main.temp}${unit === "metric" ? "°C" : "°F"}`;
     description.textContent = `Thời tiết: ${data.weather[0].description}`;
     humidity.textContent = `Độ ẩm: ${data.main.humidity}%`;
@@ -213,7 +216,7 @@ function displayWeather(data) {
     pressure.textContent = `Áp suất: ${data.main.pressure} hPa`;
     visibility.textContent = `Tầm nhìn: ${data.visibility / 1000} km`;
     weatherIcon.innerHTML = `<img src="http://openweathermap.org/img/wn/${data.weather[0].icon}.png" alt="Weather Icon">`;
-    
+
     // Thông báo thời tiết
     alert.classList.remove("show");
     if (data.rain && data.rain["1h"] > 3) {
@@ -226,6 +229,21 @@ function displayWeather(data) {
         alert.textContent = "Cảnh báo: Gió mạnh (tốc độ > 15 m/s)!";
         alert.classList.add("show");
     }
+
+    // Dự đoán cá nhân hóa
+    const preference = document.getElementById("preference").value;
+    if (preference === "walking" && data.rain && data.rain["1h"] > 0) {
+        insight.textContent = "Mang ô nếu bạn định đi bộ!";
+    } else if (preference === "riding" && data.wind.speed > 10) {
+        insight.textContent = "Cẩn thận gió mạnh khi đi xe máy!";
+    } else if (preference === "indoor" && data.weather[0].main === "Clear") {
+        insight.textContent = "Thời tiết đẹp, nhưng bạn định ở nhà à?";
+    } else {
+        insight.textContent = "Thời tiết phù hợp với kế hoạch của bạn!";
+    }
+
+    // Hiệu ứng thời tiết
+    initWeatherEffects(data.weather[0].main);
 
     document.body.classList.remove("rain", "clear", "clouds");
     if (data.weather[0].main === "Rain") document.body.classList.add("rain");
@@ -275,13 +293,11 @@ function displayHourlyForecast(data) {
         div.addEventListener("click", () => showHourlyDetails(item));
         hourlyList.appendChild(div);
 
-        // Thu thập dữ liệu cho biểu đồ
         labels.push(time);
         temps.push(temp);
     });
 
-    // Vẽ biểu đồ nhiệt độ theo giờ
-    if (hourlyChart) hourlyChart.destroy(); // Hủy biểu đồ cũ nếu có
+    if (hourlyChart) hourlyChart.destroy();
     const ctx = document.getElementById("hourly-chart").getContext("2d");
     hourlyChart = new Chart(ctx, {
         type: "line",
@@ -297,12 +313,8 @@ function displayHourlyForecast(data) {
             }]
         },
         options: {
-            scales: {
-                y: { beginAtZero: false }
-            },
-            plugins: {
-                legend: { display: false }
-            }
+            scales: { y: { beginAtZero: false } },
+            plugins: { legend: { display: false } }
         }
     });
 
@@ -324,12 +336,13 @@ function displayDailyForecast(data) {
         if (!dates.has(date) && dates.size < 5) {
             dates.add(date);
             dailyData.push(item);
-
-            // Thu thập dữ liệu cho biểu đồ
             labels.push(date);
             temps.push(item.main.temp);
         }
     });
+
+    // Lưu nhiệt độ ngày mai cho trò chơi
+    if (dailyData[1]) tomorrowTemp = dailyData[1].main.temp;
 
     dailyData.forEach(item => {
         const date = new Date(item.dt * 1000).toLocaleDateString("vi-VN");
@@ -348,8 +361,7 @@ function displayDailyForecast(data) {
         dailyList.appendChild(div);
     });
 
-    // Vẽ biểu đồ nhiệt độ theo ngày
-    if (dailyChart) dailyChart.destroy(); // Hủy biểu đồ cũ nếu có
+    if (dailyChart) dailyChart.destroy();
     const ctx = document.getElementById("daily-chart").getContext("2d");
     dailyChart = new Chart(ctx, {
         type: "line",
@@ -365,12 +377,8 @@ function displayDailyForecast(data) {
             }]
         },
         options: {
-            scales: {
-                y: { beginAtZero: false }
-            },
-            plugins: {
-                legend: { display: false }
-            }
+            scales: { y: { beginAtZero: false } },
+            plugins: { legend: { display: false } }
         }
     });
 
@@ -403,7 +411,7 @@ function updateTime(datetimeElement) {
         datetimeElement.textContent = `Cập nhật: ${now.toLocaleDateString("vi-VN")} ${now.toLocaleTimeString("vi-VN")}`;
     };
     update();
-    setInterval(update, 1000); // Cập nhật mỗi giây
+    setInterval(update, 1000);
 }
 
 // Cập nhật màu biểu đồ khi đổi theme
@@ -420,9 +428,124 @@ function updateChartColors() {
     }
 }
 
+// Hiệu ứng thời tiết
+function initWeatherEffects(weatherMain) {
+    const canvas = document.getElementById("weather-effects");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    if (weatherEffect) clearInterval(weatherEffect);
+
+    if (weatherMain === "Rain") {
+        const drops = [];
+        for (let i = 0; i < 100; i++) {
+            drops.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                length: Math.random() * 20 + 10,
+                speed: Math.random() * 5 + 2
+            });
+        }
+
+        weatherEffect = setInterval(() => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.strokeStyle = "rgba(147, 197, 253, 0.8)";
+            ctx.lineWidth = 1;
+
+            drops.forEach(drop => {
+                ctx.beginPath();
+                ctx.moveTo(drop.x, drop.y);
+                ctx.lineTo(drop.x, drop.y + drop.length);
+                ctx.stroke();
+
+                drop.y += drop.speed;
+                if (drop.y > canvas.height) {
+                    drop.y = -drop.length;
+                    drop.x = Math.random() * canvas.width;
+                }
+            });
+        }, 30);
+    } else {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+}
+
+// Nhắc nhở thời tiết
+function setReminder() {
+    const time = document.getElementById("reminder-time").value;
+    const condition = document.getElementById("reminder-condition").value;
+    const city = document.getElementById("city-input").value;
+
+    if (!time || !city) {
+        alert("Vui lòng nhập thời gian và thành phố!");
+        return;
+    }
+
+    const [hours, minutes] = time.split(":");
+    const now = new Date();
+    const reminderTime = new Date(now);
+    reminderTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+
+    const timeDiff = reminderTime - now;
+    if (timeDiff < 0) {
+        alert("Thời gian nhắc nhở phải ở tương lai!");
+        return;
+    }
+
+    setTimeout(() => {
+        fetch(`${forecastApiUrl}?q=${city}&appid=${apiKey}&units=${unit}&lang=vi`)
+            .then(response => response.json())
+            .then(data => {
+                const forecast = data.list.find(item => {
+                    const forecastTime = new Date(item.dt * 1000);
+                    return forecastTime.getHours() === parseInt(hours) && forecastTime.getMinutes() === parseInt(minutes);
+                });
+
+                if (forecast) {
+                    if (condition === "rain" && forecast.rain && forecast.rain["1h"] > 0) {
+                        alert(`Nhắc nhở: Trời mưa (${forecast.rain["1h"]} mm) tại ${city} lúc ${time}!`);
+                    } else if (condition === "hot" && forecast.main.temp > 35) {
+                        alert(`Nhắc nhở: Trời nóng (${forecast.main.temp}°C) tại ${city} lúc ${time}!`);
+                    } else if (condition === "windy" && forecast.wind.speed > 15) {
+                        alert(`Nhắc nhở: Gió mạnh (${forecast.wind.speed} m/s) tại ${city} lúc ${time}!`);
+                    }
+                }
+            });
+    }, timeDiff);
+}
+
+// Trò chơi thời tiết
+function checkGuess() {
+    const guess = parseFloat(document.getElementById("guess-temp").value);
+    const result = document.getElementById("game-result");
+
+    if (!guess || isNaN(guess)) {
+        result.textContent = "Vui lòng nhập nhiệt độ hợp lệ!";
+        return;
+    }
+
+    if (!tomorrowTemp) {
+        result.textContent = "Vui lòng tìm thời tiết trước để lấy dữ liệu!";
+        return;
+    }
+
+    const diff = Math.abs(guess - tomorrowTemp);
+    if (diff <= 2) {
+        result.textContent = `Chúc mừng! Bạn đoán gần đúng, nhiệt độ thực tế là ${tomorrowTemp}°C!`;
+    } else {
+        result.textContent = `Sai rồi! Bạn đoán lệch ${diff.toFixed(1)}°C, nhiệt độ thực tế là ${tomorrowTemp}°C.`;
+    }
+}
+
 // Gán sự kiện
 document.getElementById("theme-toggle").addEventListener("click", toggleTheme);
 document.getElementById("unit-toggle").addEventListener("click", toggleUnit);
+window.addEventListener("resize", () => {
+    const canvas = document.getElementById("weather-effects");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+});
 
 // Cập nhật tự động mỗi 15 phút
 setInterval(() => {

@@ -6,9 +6,10 @@
     <title>Dự báo thời tiết</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Thêm Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
+    <canvas id="weather-effects" class="effects"></canvas> <!-- Hiệu ứng thời tiết -->
     <div class="container">
         <h1 class="title">Dự báo thời tiết</h1>
         <div class="controls">
@@ -22,6 +23,28 @@
             <button onclick="getCurrentLocation()" class="btn-location">Vị trí hiện tại</button>
         </div>
 
+        <!-- Sở thích cá nhân -->
+        <div class="preference-box">
+            <label for="preference">Bạn thích làm gì hôm nay?</label>
+            <select id="preference">
+                <option value="walking">Đi bộ</option>
+                <option value="riding">Đi xe máy</option>
+                <option value="indoor">Ở trong nhà</option>
+            </select>
+        </div>
+
+        <!-- Nhắc nhở thời tiết -->
+        <div class="reminder-box">
+            <label for="reminder-time">Đặt nhắc nhở:</label>
+            <input type="time" id="reminder-time">
+            <select id="reminder-condition">
+                <option value="rain">Nếu trời mưa</option>
+                <option value="hot">Nếu trời nóng (>35°C)</option>
+                <option value="windy">Nếu gió mạnh (>15 m/s)</option>
+            </select>
+            <button onclick="setReminder()" class="btn-reminder">Đặt</button>
+        </div>
+
         <!-- Thông báo thời tiết -->
         <div id="weather-alert" class="alert"></div>
 
@@ -30,6 +53,7 @@
             <h2 id="city-name" class="city-name"></h2>
             <p id="datetime" class="datetime"></p>
             <button onclick="refreshWeather()" class="btn-refresh">Refresh</button>
+            <p id="personal-insight" class="insight"></p> <!-- Dự đoán cá nhân hóa -->
             <div id="weather-icon" class="weather-icon"></div>
             <p id="temperature" class="weather-detail"></p>
             <p id="description" class="weather-detail"></p>
@@ -45,14 +69,22 @@
         <div id="hourly-forecast" class="forecast-section hourly">
             <h3>Dự báo vài giờ tới</h3>
             <div id="hourly-list" class="forecast-list"></div>
-            <canvas id="hourly-chart" class="chart"></canvas> <!-- Biểu đồ nhiệt độ theo giờ -->
+            <canvas id="hourly-chart" class="chart"></canvas>
         </div>
 
         <!-- Dự báo theo ngày -->
         <div id="daily-forecast" class="forecast-section daily">
             <h3>Dự báo 5 ngày tới</h3>
             <div id="daily-list" class="forecast-list"></div>
-            <canvas id="daily-chart" class="chart"></canvas> <!-- Biểu đồ nhiệt độ theo ngày -->
+            <canvas id="daily-chart" class="chart"></canvas>
+        </div>
+
+        <!-- Trò chơi thời tiết -->
+        <div id="weather-game" class="game">
+            <h3>Đoán nhiệt độ ngày mai!</h3>
+            <input type="number" id="guess-temp" placeholder="Nhập nhiệt độ (°C)">
+            <button onclick="checkGuess()" class="btn-game">Đoán</button>
+            <p id="game-result" class="game-result"></p>
         </div>
 
         <!-- Modal chi tiết -->
