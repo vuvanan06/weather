@@ -8,7 +8,11 @@
 </head>
 <body>
     <div class="container">
-        <h1 class="title">Dự báo thời tiết An's </h1>
+        <h1 class="title">Dự báo thời tiết</h1>
+        <div class="controls">
+            <button id="theme-toggle" class="btn-theme">Chế độ tối</button>
+            <button id="unit-toggle" class="btn-unit">°C/°F</button>
+        </div>
         <div class="search-box">
             <input type="text" id="city-input" placeholder="Nhập quận, huyện, thành phố" onkeyup="suggestLocations()">
             <div id="suggestions" class="suggestions"></div>
@@ -24,6 +28,10 @@
             <p id="description" class="weather-detail"></p>
             <p id="humidity" class="weather-detail"></p>
             <p id="wind" class="weather-detail"></p>
+            <p id="rain" class="weather-detail"></p>
+            <p id="pressure" class="weather-detail"></p>
+            <p id="visibility" class="weather-detail"></p>
+            <div id="aqi-info" class="aqi-info"></div>
         </div>
 
         <!-- Dự báo theo giờ -->

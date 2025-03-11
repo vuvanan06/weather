@@ -7,15 +7,21 @@
 
 body {
     font-family: 'Segoe UI', Arial, sans-serif;
-    background: linear-gradient(135deg, #74ebd5, #acb6e5); /* Gradient nền */
+    background: linear-gradient(135deg, #74ebd5, #acb6e5); /* Background như lần trước */
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
     padding: 20px;
+    transition: background 0.5s;
 }
 
-/* Container chính */
+/* Dark Mode */
+body.dark {
+    background: linear-gradient(135deg, #2c3e50, #4b79a1);
+}
+
+/* Container */
 .container {
     background: rgba(255, 255, 255, 0.95);
     padding: 30px;
@@ -26,20 +32,43 @@ body {
     animation: fadeIn 0.5s ease-in;
 }
 
-/* Hiệu ứng fadeIn */
+body.dark .container {
+    background: rgba(44, 62, 80, 0.95);
+    color: #ecf0f1;
+}
+
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(-20px); }
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* Tiêu đề */
-.title {
-    color: #2c3e50;
-    font-size: 32px;
-    text-align: center;
-    margin-bottom: 30px;
-    text-transform: uppercase;
-    letter-spacing: 2px;
+/* Controls */
+.controls {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.btn-theme, .btn-unit {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 25px;
+    color: white;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-theme {
+    background: linear-gradient(45deg, #34495e, #6782b4);
+}
+
+.btn-unit {
+    background: linear-gradient(45deg, #f06292, #f48fb1);
+}
+
+.btn-theme:hover, .btn-unit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
 /* Thanh tìm kiếm */
@@ -62,6 +91,11 @@ body {
     transition: all 0.3s ease;
 }
 
+body.dark .search-box input {
+    background: #34495e;
+    color: #ecf0f1;
+}
+
 .search-box input:focus {
     outline: none;
     background: #fff;
@@ -74,7 +108,6 @@ body {
     border-radius: 25px;
     color: white;
     cursor: pointer;
-    font-size: 16px;
     transition: transform 0.2s, box-shadow 0.2s;
 }
 
@@ -91,7 +124,7 @@ body {
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
-/* Danh sách gợi ý */
+/* Gợi ý */
 .suggestions {
     position: absolute;
     top: 100%;
@@ -106,6 +139,10 @@ body {
     z-index: 10;
 }
 
+body.dark .suggestions {
+    background: #34495e;
+}
+
 .suggestions div {
     padding: 12px 20px;
     cursor: pointer;
@@ -116,6 +153,10 @@ body {
     background: #e8f5e9;
 }
 
+body.dark .suggestions div:hover {
+    background: #5d80a6;
+}
+
 /* Thời tiết hiện tại */
 .weather-info {
     display: none;
@@ -124,6 +165,10 @@ body {
     border-radius: 15px;
     margin-bottom: 30px;
     animation: slideUp 0.5s ease;
+}
+
+body.dark .weather-info {
+    background: linear-gradient(135deg, #34495e, #5d80a6);
 }
 
 .weather-info.show {
@@ -139,6 +184,10 @@ body {
     color: #1e88e5;
     font-size: 28px;
     margin-bottom: 15px;
+}
+
+body.dark .city-name {
+    color: #90caf9;
 }
 
 .weather-icon img {
@@ -159,6 +208,16 @@ body {
     margin: 10px 0;
 }
 
+body.dark .weather-detail {
+    color: #ecf0f1;
+}
+
+.aqi-info {
+    margin-top: 15px;
+    font-size: 16px;
+    color: #e74c3c;
+}
+
 /* Phần dự báo */
 .forecast-section {
     display: none;
@@ -176,6 +235,10 @@ body {
     text-align: left;
 }
 
+body.dark .forecast-section h3 {
+    color: #ecf0f1;
+}
+
 .forecast-list {
     display: flex;
     flex-wrap: wrap;
@@ -187,10 +250,14 @@ body {
     background: #fff;
     padding: 15px;
     border-radius: 10px;
-    flex: 1 1 calc(20% - 15px); /* 5 mục trên 1 hàng */
+    flex: 1 1 calc(20% - 15px);
     text-align: center;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s;
+}
+
+body.dark .forecast-item {
+    background: #34495e;
 }
 
 .forecast-item:hover {
@@ -209,7 +276,11 @@ body {
     margin: 8px 0;
 }
 
-/* Điều chỉnh cho màn hình nhỏ */
+body.dark .forecast-item p {
+    color: #ecf0f1;
+}
+
+/* Responsive */
 @media (max-width: 600px) {
     .container {
         width: 100%;
@@ -230,6 +301,6 @@ body {
     }
 
     .forecast-item {
-        flex: 1 1 calc(50% - 15px); /* 2 mục trên 1 hàng */
+        flex: 1 1 calc(50% - 15px);
     }
 }

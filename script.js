@@ -1,7 +1,10 @@
-const apiKey = "8ae780d44433664862da06b218c9e998"; // API Key của bạn
+const apiKey = "8ae780d44433664862da06b218c9e998";
 const apiUrl = "https://api.openweathermap.org/data/2.5/weather";
 const forecastApiUrl = "https://api.openweathermap.org/data/2.5/forecast";
+const airPollutionUrl = "https://api.openweathermap.org/data/2.5/air_pollution";
 const geocodeApiUrl = "http://api.openweathermap.org/geo/1.0/direct";
+
+let unit = "metric";
 
 const locations = [
     "Hà Nội", "Quận Ba Đình", "Quận Hoàn Kiếm", "Quận Đống Đa", "Quận Hai Bà Trưng",
@@ -17,6 +20,7 @@ function getWeather() {
     }
     fetchWeather(city);
     fetchForecast(city);
+    fetchAirPollution(city);
     document.getElementById("suggestions").style.display = "none";
 }
 
@@ -28,6 +32,7 @@ function getCurrentLocation() {
                 const lon = position.coords.longitude;
                 fetchWeatherByCoords(lat, lon);
                 fetchForecastByCoords(lat, lon);
+                fetchAirPollutionByCoords(lat, lon);
             },
             error => {
                 if (error.code === error.PERMISSION_DENIED) {
@@ -91,8 +96,20 @@ function suggestLocations() {
         });
 }
 
+function toggleUnit() {
+    unit = unit === "metric" ? "imperial" : "metric";
+    document.getElementById("unit-toggle").textContent = unit === "metric" ? "°C/°F" : "°F/°C";
+    const city = document.getElementById("city-input").value;
+    if (city) getWeather();
+}
+
+function toggleTheme() {
+    document.body.classList.toggle("dark");
+    document.getElementById("theme-toggle").textContent = document.body.classList.contains("dark") ? "Chế độ sáng" : "Chế độ tối";
+}
+
 function fetchWeather(city) {
-    const url = `${apiUrl}?q=${city}&appid=${apiKey}&units=metric&lang=vi`;
+    const url = `${apiUrl}?q=${city}&appid=${apiKey}&units=${unit}&lang=vi`;
     fetch(url)
         .then(response => {
             if (!response.ok) throw new Error("Không tìm thấy khu vực!");
@@ -103,7 +120,7 @@ function fetchWeather(city) {
 }
 
 function fetchWeatherByCoords(lat, lon) {
-    const url = `${apiUrl}?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric&lang=vi`;
+    const url = `${apiUrl}?lat=${lat}&lon=${lon}&appid=${apiKey}&units=${unit}&lang=vi`;
     fetch(url)
         .then(response => {
             if (!response.ok) throw new Error("Không thể lấy dữ liệu thời tiết!");
@@ -114,7 +131,7 @@ function fetchWeatherByCoords(lat, lon) {
 }
 
 function fetchForecast(city) {
-    const url = `${forecastApiUrl}?q=${city}&appid=${apiKey}&units=metric&lang=vi`;
+    const url = `${forecastApiUrl}?q=${city}&appid=${apiKey}&units=${unit}&lang=vi`;
     fetch(url)
         .then(response => {
             if (!response.ok) throw new Error("Không thể lấy dữ liệu dự báo!");
@@ -128,7 +145,7 @@ function fetchForecast(city) {
 }
 
 function fetchForecastByCoords(lat, lon) {
-    const url = `${forecastApiUrl}?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric&lang=vi`;
+    const url = `${forecastApiUrl}?lat=${lat}&lon=${lon}&appid=${apiKey}&units=${unit}&lang=vi`;
     fetch(url)
         .then(response => {
             if (!response.ok) throw new Error("Không thể lấy dữ liệu dự báo!");
@@ -141,6 +158,26 @@ function fetchForecastByCoords(lat, lon) {
         .catch(error => alert(error.message));
 }
 
+function fetchAirPollution(city) {
+    fetch(`${geocodeApiUrl}?q=${city}&limit=1&appid=${apiKey}`)
+        .then(response => response.json())
+        .then(data => {
+            const lat = data[0].lat;
+            const lon = data[0].lon;
+            fetch(`${airPollutionUrl}?lat=${lat}&lon=${lon}&appid=${apiKey}`)
+                .then(response => response.json())
+                .then(data => displayAQI(data));
+        })
+        .catch(error => console.log("Không thể lấy AQI: " + error.message));
+}
+
+function fetchAirPollutionByCoords(lat, lon) {
+    fetch(`${airPollutionUrl}?lat=${lat}&lon=${lon}&appid=${apiKey}`)
+        .then(response => response.json())
+        .then(data => displayAQI(data))
+        .catch(error => console.log("Không thể lấy AQI: " + error.message));
+}
+
 function displayWeather(data) {
     const weatherInfo = document.getElementById("weather-info");
     const cityName = document.getElementById("city-name");
@@ -148,16 +185,42 @@ function displayWeather(data) {
     const description = document.getElementById("description");
     const humidity = document.getElementById("humidity");
     const wind = document.getElementById("wind");
+    const rain = document.getElementById("rain");
+    const pressure = document.getElementById("pressure");
+    const visibility = document.getElementById("visibility");
     const weatherIcon = document.getElementById("weather-icon");
 
     cityName.textContent = `${data.name}, ${data.sys.country}`;
-    temperature.textContent = `Nhiệt độ: ${data.main.temp}°C`;
+    temperature.textContent = `Nhiệt độ: ${data.main.temp}${unit === "metric" ? "°C" : "°F"}`;
     description.textContent = `Thời tiết: ${data.weather[0].description}`;
     humidity.textContent = `Độ ẩm: ${data.main.humidity}%`;
-    wind.textContent = `Tốc độ gió: ${data.wind.speed} m/s`;
+    wind.textContent = `Tốc độ gió: ${data.wind.speed} ${unit === "metric" ? "m/s" : "mph"}`;
+    rain.textContent = `Độ mưa: ${data.rain ? (data.rain["1h"] || 0) : 0} mm`;
+    pressure.textContent = `Áp suất: ${data.main.pressure} hPa`;
+    visibility.textContent = `Tầm nhìn: ${data.visibility / 1000} km`;
     weatherIcon.innerHTML = `<img src="http://openweathermap.org/img/wn/${data.weather[0].icon}.png" alt="Weather Icon">`;
 
+    // Hiệu ứng nền động (chỉ thêm class, không đổi background)
+    document.body.classList.remove("rain", "clear", "clouds");
+    if (data.weather[0].main === "Rain") document.body.classList.add("rain");
+    else if (data.weather[0].main === "Clear") document.body.classList.add("clear");
+    else if (data.weather[0].main === "Clouds") document.body.classList.add("clouds");
+
     weatherInfo.classList.add("show");
+}
+
+function displayAQI(data) {
+    const aqi = data.list[0].main.aqi;
+    const aqiInfo = document.getElementById("aqi-info");
+    aqiInfo.textContent = `Chỉ số AQI: ${aqi} (${getAQILevel(aqi)})`;
+}
+
+function getAQILevel(aqi) {
+    if (aqi === 1) return "Tốt";
+    if (aqi === 2) return "Trung bình";
+    if (aqi === 3) return "Không lành mạnh cho nhóm nhạy cảm";
+    if (aqi === 4) return "Không lành mạnh";
+    return "Nguy hiểm";
 }
 
 function displayHourlyForecast(data) {
@@ -165,7 +228,7 @@ function displayHourlyForecast(data) {
     const hourlySection = document.getElementById("hourly-forecast");
     hourlyList.innerHTML = "";
 
-    const hourlyData = data.list.slice(0, 8); // Lấy 8 khung giờ
+    const hourlyData = data.list.slice(0, 8);
     hourlyData.forEach(item => {
         const time = new Date(item.dt * 1000).toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" });
         const temp = item.main.temp;
@@ -177,7 +240,7 @@ function displayHourlyForecast(data) {
         div.innerHTML = `
             <p>${time}</p>
             <img src="http://openweathermap.org/img/wn/${icon}.png" alt="Weather Icon">
-            <p>${temp}°C</p>
+            <p>${temp}${unit === "metric" ? "°C" : "°F"}</p>
             <p>${desc}</p>
         `;
         hourlyList.appendChild(div);
@@ -212,7 +275,7 @@ function displayDailyForecast(data) {
         div.innerHTML = `
             <p>${date}</p>
             <img src="http://openweathermap.org/img/wn/${icon}.png" alt="Weather Icon">
-            <p>${temp}°C</p>
+            <p>${temp}${unit === "metric" ? "°C" : "°F"}</p>
             <p>${desc}</p>
         `;
         dailyList.appendChild(div);
@@ -220,3 +283,13 @@ function displayDailyForecast(data) {
 
     dailySection.classList.add("show");
 }
+
+// Widget thời gian thực
+setInterval(() => {
+    const city = document.getElementById("city-input").value;
+    if (city) getWeather();
+}, 15 * 60 * 1000); // Cập nhật mỗi 15 phút
+
+// Gán sự kiện
+document.getElementById("theme-toggle").addEventListener("click", toggleTheme);
+document.getElementById("unit-toggle").addEventListener("click", toggleUnit);
