@@ -9,12 +9,13 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    <canvas id="weather-effects" class="effects"></canvas> <!-- Hiệu ứng thời tiết -->
+    <canvas id="weather-effects" class="effects"></canvas>
     <div class="container">
         <h1 class="title">Dự báo thời tiết</h1>
         <div class="controls">
             <button id="theme-toggle" class="btn-theme">Chế độ tối</button>
             <button id="unit-toggle" class="btn-unit">°C/°F</button>
+            <button onclick="shareWeather()" class="btn-share">Chia sẻ</button>
         </div>
         <div class="search-box">
             <input type="text" id="city-input" placeholder="Nhập quận, huyện, thành phố" onkeyup="suggestLocations()">
@@ -23,7 +24,6 @@
             <button onclick="getCurrentLocation()" class="btn-location">Vị trí hiện tại</button>
         </div>
 
-        <!-- Sở thích cá nhân -->
         <div class="preference-box">
             <label for="preference">Bạn thích làm gì hôm nay?</label>
             <select id="preference">
@@ -33,7 +33,6 @@
             </select>
         </div>
 
-        <!-- Nhắc nhở thời tiết -->
         <div class="reminder-box">
             <label for="reminder-time">Đặt nhắc nhở:</label>
             <input type="time" id="reminder-time">
@@ -45,15 +44,13 @@
             <button onclick="setReminder()" class="btn-reminder">Đặt</button>
         </div>
 
-        <!-- Thông báo thời tiết -->
         <div id="weather-alert" class="alert"></div>
 
-        <!-- Thời tiết hiện tại -->
         <div id="weather-info" class="weather-info">
             <h2 id="city-name" class="city-name"></h2>
             <p id="datetime" class="datetime"></p>
             <button onclick="refreshWeather()" class="btn-refresh">Refresh</button>
-            <p id="personal-insight" class="insight"></p> <!-- Dự đoán cá nhân hóa -->
+            <p id="personal-insight" class="insight"></p>
             <div id="weather-icon" class="weather-icon"></div>
             <p id="temperature" class="weather-detail"></p>
             <p id="description" class="weather-detail"></p>
@@ -65,21 +62,29 @@
             <div id="aqi-info" class="aqi-info"></div>
         </div>
 
-        <!-- Dự báo theo giờ -->
         <div id="hourly-forecast" class="forecast-section hourly">
             <h3>Dự báo vài giờ tới</h3>
             <div id="hourly-list" class="forecast-list"></div>
             <canvas id="hourly-chart" class="chart"></canvas>
         </div>
 
-        <!-- Dự báo theo ngày -->
         <div id="daily-forecast" class="forecast-section daily">
             <h3>Dự báo 5 ngày tới</h3>
             <div id="daily-list" class="forecast-list"></div>
             <canvas id="daily-chart" class="chart"></canvas>
         </div>
 
-        <!-- Trò chơi thời tiết -->
+        <!-- Dự báo ngày bất kỳ -->
+        <div id="custom-forecast" class="forecast-section custom">
+            <h3>Dự báo ngày bất kỳ</h3>
+            <div class="custom-date-input">
+                <label for="custom-date">Chọn ngày:</label>
+                <input type="date" id="custom-date">
+                <button onclick="fetchCustomForecast()" class="btn-custom">Xem</button>
+            </div>
+            <div id="custom-forecast-result" class="forecast-result"></div>
+        </div>
+
         <div id="weather-game" class="game">
             <h3>Đoán nhiệt độ ngày mai!</h3>
             <input type="number" id="guess-temp" placeholder="Nhập nhiệt độ (°C)">
@@ -87,7 +92,6 @@
             <p id="game-result" class="game-result"></p>
         </div>
 
-        <!-- Modal chi tiết -->
         <div id="weather-modal" class="modal">
             <div class="modal-content">
                 <h2 id="modal-time" class="modal-title"></h2>
@@ -102,6 +106,21 @@
             </div>
         </div>
     </div>
+
+    <!-- Chatbot -->
+    <div id="chatbot" class="chatbot closed">
+        <div id="chatbot-header" class="chatbot-header">
+            <h3>Chatbot thời tiết</h3>
+            <button id="chatbot-toggle" onclick="toggleChatbot()">💬</button>
+        </div>
+        <div id="chatbot-messages" class="chatbot-messages"></div>
+        <div class="chatbot-input">
+            <input type="text" id="chatbot-input" placeholder="Nhập tin nhắn..." onkeypress="if(event.key === 'Enter') sendMessage()">
+            <button onclick="sendMessage()" class="btn-chat">Gửi</button>
+            <button id="voice-chat-btn" class="btn-voice-chat" onclick="toggleVoiceChat()">🎤</button>
+        </div>
+    </div>
+
     <script src="script.js"></script>
 </body>
 </html>

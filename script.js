@@ -7,10 +7,11 @@ const geocodeApiUrl = "http://api.openweathermap.org/geo/1.0/direct";
 let unit = "metric";
 let hourlyChart, dailyChart;
 let weatherEffect = null;
-let tomorrowTemp = null; // Lưu nhiệt độ ngày mai cho trò chơi
+let tomorrowTemp = null;
+let isVoiceActive = false;
 
 const locations = [
-   
+    "Hà Nội", "TP Hồ Chí Minh", "Đà Nẵng", "Huế", "Nha Trang", "Cần Thơ"
 ];
 
 function getWeather() {
@@ -215,7 +216,6 @@ function displayWeather(data) {
     visibility.textContent = `Tầm nhìn: ${data.visibility / 1000} km`;
     weatherIcon.innerHTML = `<img src="http://openweathermap.org/img/wn/${data.weather[0].icon}.png" alt="Weather Icon">`;
 
-    // Thông báo thời tiết
     alert.classList.remove("show");
     if (data.rain && data.rain["1h"] > 3) {
         alert.textContent = `Cảnh báo: Mưa lớn (${data.rain["1h"]} mm) trong 1 giờ tới!`;
@@ -228,7 +228,6 @@ function displayWeather(data) {
         alert.classList.add("show");
     }
 
-    // Dự đoán cá nhân hóa
     const preference = document.getElementById("preference").value;
     if (preference === "walking" && data.rain && data.rain["1h"] > 0) {
         insight.textContent = "Mang ô nếu bạn định đi bộ!";
@@ -240,14 +239,7 @@ function displayWeather(data) {
         insight.textContent = "Thời tiết phù hợp với kế hoạch của bạn!";
     }
 
-    // Hiệu ứng thời tiết
     initWeatherEffects(data.weather[0].main);
-
-    document.body.classList.remove("rain", "clear", "clouds");
-    if (data.weather[0].main === "Rain") document.body.classList.add("rain");
-    else if (data.weather[0].main === "Clear") document.body.classList.add("clear");
-    else if (data.weather[0].main === "Clouds") document.body.classList.add("clouds");
-
     weatherInfo.classList.add("show");
 }
 
@@ -339,7 +331,6 @@ function displayDailyForecast(data) {
         }
     });
 
-    // Lưu nhiệt độ ngày mai cho trò chơi
     if (dailyData[1]) tomorrowTemp = dailyData[1].main.temp;
 
     dailyData.forEach(item => {
@@ -383,6 +374,67 @@ function displayDailyForecast(data) {
     dailySection.classList.add("show");
 }
 
+function fetchCustomForecast() {
+    const city = document.getElementById("city-input").value;
+    const customDate = document.getElementById("custom-date").value;
+    const resultDiv = document.getElementById("custom-forecast-result");
+    const customSection = document.getElementById("custom-forecast");
+
+    if (!city) {
+        alert("Vui lòng nhập tên khu vực trước!");
+        return;
+    }
+    if (!customDate) {
+        alert("Vui lòng chọn ngày cần dự báo!");
+        return;
+    }
+
+    const selectedDate = new Date(customDate);
+    const now = new Date();
+    const maxDate = new Date(now);
+    maxDate.setDate(now.getDate() + 5); // API chỉ dự báo 5 ngày tới
+
+    if (selectedDate < now.setHours(0, 0, 0, 0) || selectedDate > maxDate) {
+        resultDiv.innerHTML = `<p>Chỉ có thể dự báo từ hôm nay đến 5 ngày tới!</p>`;
+        customSection.classList.add("show");
+        return;
+    }
+
+    fetch(`${forecastApiUrl}?q=${city}&appid=${apiKey}&units=${unit}&lang=vi`)
+        .then(response => {
+            if (!response.ok) throw new Error("Không thể lấy dữ liệu dự báo!");
+            return response.json();
+        })
+        .then(data => {
+            const forecast = data.list.find(item => {
+                const forecastDate = new Date(item.dt * 1000);
+                return forecastDate.toLocaleDateString("vi-VN") === selectedDate.toLocaleDateString("vi-VN");
+            });
+
+            if (forecast) {
+                const temp = forecast.main.temp;
+                const desc = forecast.weather[0].description;
+                const icon = forecast.weather[0].icon;
+                const rain = forecast.rain && forecast.rain["1h"] ? forecast.rain["1h"] : 0;
+
+                resultDiv.innerHTML = `
+                    <p>Ngày ${selectedDate.toLocaleDateString("vi-VN")}</p>
+                    <img src="http://openweathermap.org/img/wn/${icon}.png" alt="Weather Icon">
+                    <p>Nhiệt độ: ${temp}${unit === "metric" ? "°C" : "°F"}</p>
+                    <p>Thời tiết: ${desc}</p>
+                    <p>Độ mưa: ${rain} mm</p>
+                `;
+            } else {
+                resultDiv.innerHTML = `<p>Không có dữ liệu cho ngày này!</p>`;
+            }
+            customSection.classList.add("show");
+        })
+        .catch(error => {
+            resultDiv.innerHTML = `<p>Lỗi: ${error.message}</p>`;
+            customSection.classList.add("show");
+        });
+}
+
 function showHourlyDetails(item) {
     const modal = document.getElementById("weather-modal");
     document.getElementById("modal-time").textContent = new Date(item.dt * 1000).toLocaleString("vi-VN");
@@ -402,7 +454,6 @@ function closeModal() {
     modal.classList.remove("show");
 }
 
-// Widget thời gian thực
 function updateTime(datetimeElement) {
     const update = () => {
         const now = new Date();
@@ -412,7 +463,6 @@ function updateTime(datetimeElement) {
     setInterval(update, 1000);
 }
 
-// Cập nhật màu biểu đồ khi đổi theme
 function updateChartColors() {
     if (hourlyChart) {
         hourlyChart.data.datasets[0].borderColor = document.body.classList.contains("dark") ? "#93c5fd" : "#1e40af";
@@ -426,7 +476,6 @@ function updateChartColors() {
     }
 }
 
-// Hiệu ứng thời tiết
 function initWeatherEffects(weatherMain) {
     const canvas = document.getElementById("weather-effects");
     const ctx = canvas.getContext("2d");
@@ -469,7 +518,6 @@ function initWeatherEffects(weatherMain) {
     }
 }
 
-// Nhắc nhở thời tiết
 function setReminder() {
     const time = document.getElementById("reminder-time").value;
     const condition = document.getElementById("reminder-condition").value;
@@ -513,7 +561,6 @@ function setReminder() {
     }, timeDiff);
 }
 
-// Trò chơi thời tiết
 function checkGuess() {
     const guess = parseFloat(document.getElementById("guess-temp").value);
     const result = document.getElementById("game-result");
@@ -536,6 +583,191 @@ function checkGuess() {
     }
 }
 
+function shareWeather() {
+    const city = document.getElementById("city-name").textContent;
+    const temp = document.getElementById("temperature").textContent;
+    const desc = document.getElementById("description").textContent;
+    const message = `Thời tiết tại ${city}: ${temp}, ${desc}. Xem thêm tại [URL ứng dụng]`;
+    navigator.clipboard.writeText(message).then(() => alert("Đã sao chép thông tin thời tiết!"));
+}
+
+// Chatbot Logic
+function toggleChatbot() {
+    const chatbot = document.getElementById("chatbot");
+    chatbot.classList.toggle("closed");
+    document.getElementById("chatbot-toggle").textContent = chatbot.classList.contains("closed") ? "💬" : "✖";
+}
+
+function sendMessage() {
+    const input = document.getElementById("chatbot-input");
+    const message = input.value.trim();
+    if (!message) return;
+
+    addMessage(message, "user");
+    input.value = "";
+    processMessage(message);
+}
+
+function addMessage(text, type) {
+    const messages = document.getElementById("chatbot-messages");
+    const div = document.createElement("div");
+    div.classList.add("message", type);
+    div.textContent = text;
+    messages.appendChild(div);
+    messages.scrollTop = messages.scrollHeight;
+}
+
+function extractCityFromMessage(message) {
+    const cities = ["hà nội", "tp hồ chí minh", "đà nẵng", "huế", "nha trang", "cần thơ"];
+    const lowerMessage = message.toLowerCase();
+
+    for (let city of cities) {
+        if (lowerMessage.includes(city)) {
+            return city;
+        }
+    }
+
+    const words = lowerMessage.split(" ");
+    const atIndex = words.indexOf("tại");
+    if (atIndex !== -1 && atIndex + 1 < words.length) {
+        return words[atIndex + 1];
+    }
+
+    return words.find(word => word.length > 2) || document.getElementById("city-input").value;
+}
+
+function processMessage(message) {
+    const lowerMessage = message.toLowerCase();
+    const city = extractCityFromMessage(message);
+
+    if (!city) {
+        addMessage("Bạn muốn hỏi thời tiết ở đâu nhỉ? Hãy nói rõ thành phố nhé!", "bot");
+        speak("Bạn muốn hỏi thời tiết ở đâu nhỉ? Hãy nói rõ thành phố nhé!");
+        return;
+    }
+
+    if (lowerMessage.includes("thời tiết") || lowerMessage.includes("hôm nay")) {
+        fetchWeatherForChat(city);
+    } else if (lowerMessage.includes("ngày mai") || lowerMessage.includes("có mưa không")) {
+        fetchForecastForChat(city);
+    } else if (lowerMessage.includes("mấy giờ") || lowerMessage.includes("giờ nào")) {
+        fetchHourlyWeatherForChat(city);
+    } else {
+        addMessage("Tôi chỉ biết về thời tiết thôi! Hỏi tôi như 'Thời tiết Hà Nội hôm nay thế nào?' nhé!", "bot");
+        speak("Tôi chỉ biết về thời tiết thôi! Hỏi tôi như 'Thời tiết Hà Nội hôm nay thế nào?' nhé!");
+    }
+}
+
+function fetchWeatherForChat(city) {
+    const url = `${apiUrl}?q=${city}&appid=${apiKey}&units=${unit}&lang=vi`;
+    fetch(url)
+        .then(response => {
+            if (!response.ok) throw new Error("Không tìm thấy khu vực!");
+            return response.json();
+        })
+        .then(data => {
+            const reply = `Thời tiết tại ${data.name}: ${data.main.temp}${unit === "metric" ? "°C" : "°F"}, ${data.weather[0].description}.`;
+            addMessage(reply, "bot");
+            speak(reply);
+            document.getElementById("city-input").value = city;
+            displayWeather(data);
+        })
+        .catch(error => {
+            const errorReply = `Tôi không tìm thấy thời tiết cho "${city}". Bạn thử kiểm tra lại tên thành phố xem sao nhé!`;
+            addMessage(errorReply, "bot");
+            speak(errorReply);
+        });
+}
+
+function fetchForecastForChat(city) {
+    const url = `${forecastApiUrl}?q=${city}&appid=${apiKey}&units=${unit}&lang=vi`;
+    fetch(url)
+        .then(response => {
+            if (!response.ok) throw new Error("Không thể lấy dữ liệu!");
+            return response.json();
+        })
+        .then(data => {
+            const tomorrow = data.list.find(item => {
+                const date = new Date(item.dt * 1000);
+                const tomorrowDate = new Date();
+                tomorrowDate.setDate(tomorrowDate.getDate() + 1);
+                return date.getDate() === tomorrowDate.getDate();
+            });
+            if (tomorrow) {
+                const rain = tomorrow.rain && tomorrow.rain["1h"] ? tomorrow.rain["1h"] : 0;
+                const reply = `Ngày mai tại ${city}: ${tomorrow.main.temp}${unit === "metric" ? "°C" : "°F"}, ${tomorrow.weather[0].description}. ${rain > 0 ? `Có mưa (${rain} mm).` : "Không có mưa."}`;
+                addMessage(reply, "bot");
+                speak(reply);
+            } else {
+                addMessage("Không có dữ liệu ngày mai cho khu vực này!", "bot");
+                speak("Không có dữ liệu ngày mai cho khu vực này!");
+            }
+        })
+        .catch(error => {
+            const errorReply = `Tôi không tìm thấy dự báo cho "${city}". Kiểm tra lại tên thành phố nhé!`;
+            addMessage(errorReply, "bot");
+            speak(errorReply);
+        });
+}
+
+function fetchHourlyWeatherForChat(city) {
+    const url = `${forecastApiUrl}?q=${city}&appid=${apiKey}&units=${unit}&lang=vi`;
+    fetch(url)
+        .then(response => {
+            if (!response.ok) throw new Error("Không thể lấy dữ liệu!");
+            return response.json();
+        })
+        .then(data => {
+            const hourlyData = data.list.slice(0, 8);
+            let reply = `Dự báo vài giờ tới tại ${city}:\n`;
+            hourlyData.forEach(item => {
+                const time = new Date(item.dt * 1000).toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" });
+                reply += `${time}: ${item.main.temp}${unit === "metric" ? "°C" : "°F"}, ${item.weather[0].description}\n`;
+            });
+            addMessage(reply, "bot");
+            speak(reply);
+        })
+        .catch(error => {
+            const errorReply = `Tôi không tìm thấy dự báo giờ cho "${city}". Kiểm tra lại tên thành phố nhé!`;
+            addMessage(errorReply, "bot");
+            speak(errorReply);
+        });
+}
+
+function toggleVoiceChat() {
+    const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    const voiceBtn = document.getElementById("voice-chat-btn");
+
+    if (!isVoiceActive) {
+        recognition.lang = "vi-VN";
+        recognition.start();
+        isVoiceActive = true;
+        voiceBtn.classList.add("active");
+        voiceBtn.textContent = "🎙️";
+
+        recognition.onresult = (event) => {
+            const message = event.results[0][0].transcript;
+            addMessage(message, "user");
+            processMessage(message);
+        };
+
+        recognition.onend = () => {
+            isVoiceActive = false;
+            voiceBtn.classList.remove("active");
+            voiceBtn.textContent = "🎤";
+        };
+    } else {
+        recognition.stop();
+    }
+}
+
+function speak(text) {
+    const synth = window.speechSynthesis;
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = "vi-VN";
+    synth.speak(utterance);
+}
+
 // Gán sự kiện
 document.getElementById("theme-toggle").addEventListener("click", toggleTheme);
 document.getElementById("unit-toggle").addEventListener("click", toggleUnit);
@@ -545,7 +777,10 @@ window.addEventListener("resize", () => {
     canvas.height = window.innerHeight;
 });
 
-// Cập nhật tự động mỗi 15 phút
+window.addEventListener("load", () => {
+    document.getElementById("chatbot").classList.add("closed");
+});
+
 setInterval(() => {
     const city = document.getElementById("city-input").value;
     if (city) getWeather();
